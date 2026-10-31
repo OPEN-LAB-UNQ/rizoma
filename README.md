@@ -82,7 +82,7 @@ python -m pytest -q tests
 
 ## Estado
 
-Prototipo de investigación. Las sugerencias son hipótesis para conversar, no decisiones: validarlas exige personas reales evaluando los vínculos a ciegas. Todos los perfiles incluidos en este repositorio son ficticios.
+Prototipo para generar redes. Las sugerencias son hipótesis para conversar, no decisiones: validarlas exige personas reales evaluando los vínculos a ciegas. Todos los perfiles incluidos en este repositorio son ficticios.
 
 ## Autoría y licencia
 
