@@ -17,7 +17,10 @@ PHONE_RE = re.compile(r"(?<!\w)(?:\+?\d[\d \t().-]{7,}\d)(?!\w)")
 # Rangos de años de un CV ("2015 - 2018"): parecen teléfonos pero no lo son.
 _RANGO_ANIOS_RE = re.compile(r"(?:19|20)\d{2}\s*[-–/]\s*(?:19|20)\d{2}")
 DNI_RE = re.compile(r"\b(?:DNI|CUIL|CUIT|documento|legajo)\s*[:#-]?\s*[\d.\-/]{6,}\b", re.IGNORECASE)
-ADDRESS_RE = re.compile(r"\b(?:calle|av\.?|avenida|domicilio|direcci[oó]n)\s+[A-ZÁÉÍÓÚÑa-záéíóúñ0-9 .'-]{3,}\b", re.IGNORECASE)
+# Una dirección lleva un número cerca de la palabra clave («Calle 45 # 12-30», «Carrera 7 n.º 40»): sin
+# número, «dirección de tesis» o «dirección de semilleros» son trayectoria y no se tocan.
+ADDRESS_RE = re.compile(r"\b(?:calle|carrera|avenida|domicilio|direcci[oó]n|cra|av)\b\.?:?\s+[^\n.;,]{0,40}?\d(?:[\w#°º/ -]|\.(?=\s*\d)){0,25}",
+                        re.IGNORECASE)
 SOCIAL_RE = re.compile(r"(?<!\w)@[A-Za-z0-9_\.]{3,}")
 
 OMITIDO = "[nombre omitido]"

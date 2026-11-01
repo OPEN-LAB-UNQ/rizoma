@@ -1609,7 +1609,7 @@ function showTab(id, btn, push = true) {
   if (id === 'observatorio') { loadObservatorio(); loadActividades(); loadDemanda(); loadPuentes(); loadTriangulacion(); resumenEvaluacion(); }
   if (id === 'matches') loadNotifications();
   if (id === 'recursos') { loadRecursos(); cargarSeguimiento(); }
-  if (id === 'perfil') cargarMisRecursos();
+  if (id === 'perfil') { cargarMisRecursos(); cargarMisTemas(); }
 }
 
 async function loadCredentialsForProfile() {
@@ -2386,6 +2386,32 @@ async function loadObservatorio() {
     body.innerHTML = renderObservatorioDemo();
     cargarObservatorioDemo();
   }
+}
+
+// ── Carga guiada sin CV y temas clasificados a la vista (traído de Rizoma Afadeco) ──
+async function guardarCargaGuiada() {
+  const lista = id => (document.getElementById(id)?.value || '').split(',').map(s => s.trim()).filter(Boolean).slice(0, 12);
+  const datos = { can_offer: lista('guiaSabe'), wants_to_learn: lista('guiaQuiere'), interests: lista('guiaInteresa') };
+  if (!datos.can_offer.length && !datos.wants_to_learn.length) { toast('Contá al menos qué sabés hacer o qué querés aprender.', 'warn'); return; }
+  try {
+    currentUser = await api('PUT', '/api/users/me', datos);
+    renderSidebar();
+    toast('Listo: tu grafo se arma con esas respuestas. Los temas se clasifican en unos minutos.', 'success');
+    showTab('rizoma', document.querySelector('[data-nav=rizoma]'));
+  } catch (e) { toast('No se pudo guardar: ' + e.message, 'warn'); }
+}
+
+async function cargarMisTemas() {
+  const el = document.getElementById('misTemasLista');
+  if (!el) return;
+  try {
+    const temas = await api('GET', '/api/users/me/temas') || [];
+    el.innerHTML = temas.length ? `<div class="mis-temas-grid">${temas.map(t => `
+      <div class="mi-tema"><div><strong>${escapeHtml(t.tema)}</strong>
+      <small>${escapeHtml([t.macro, t.subtema].filter(Boolean).join(' · ') || 'Sin clasificar todavía')}</small>
+      <small>${escapeHtml(t.relaciones.join(', '))}</small></div></div>`).join('')}</div>`
+      : '<p class="muted">Todavía no hay temas: subí tu CV o respondé las tres preguntas.</p>';
+  } catch { el.innerHTML = '<p class="muted">No se pudieron cargar tus temas.</p>'; }
 }
 
 // ── Recursos que cada persona pone a disposición (traído de Rizoma Afadeco) ────

@@ -7,7 +7,7 @@
   <title>Rizoma — Emergen las conexiones</title>
   <link rel="icon" href="static/favicon.svg?v=20260808-curves" type="image/svg+xml">
   <link rel="stylesheet" href="static/css/fonts.css?v=20261018-fuentes">
-  <link rel="stylesheet" href="static/css/styles.css?v=20261025-recursos2">
+  <link rel="stylesheet" href="static/css/styles.css?v=20261031-mejoras">
 </head>
 <body>
 
@@ -283,6 +283,14 @@
             <button class="btn" id="buildBtn" onclick="buildProfile()">Revisar y generar grafo</button>
             <button class="btn secondary" onclick="demoProfile()">CV demo</button>
           </div>
+          <details class="carga-guiada">
+            <summary>¿No tenés el CV a mano? Respondé tres preguntas</summary>
+            <p class="cv-nota">Sirve igual que un currículum y no hace falta trayectoria formal. Separá cada cosa con comas.</p>
+            <label>¿Qué sabés hacer?<input id="guiaSabe" type="text" maxlength="400" placeholder="Por ejemplo: gestión de turnos, Python, coordinar talleres"></label>
+            <label>¿Qué querés aprender?<input id="guiaQuiere" type="text" maxlength="400" placeholder="Por ejemplo: análisis de datos, historia clínica digital"></label>
+            <label>¿Qué te interesa?<input id="guiaInteresa" type="text" maxlength="400" placeholder="Por ejemplo: salud comunitaria, economía social"></label>
+            <button class="btn" onclick="guardarCargaGuiada()">Guardar y armar mi grafo</button>
+          </details>
         </div>
         <h3 class="section-title signal-title">Bitácora de señales</h3>
         <div class="filter-bar signal-filters">
@@ -312,6 +320,11 @@
         <div class="grid-2">
           <div class="card"><div class="card-top"><h4>Bio</h4><span class="badge green">Verificable</span></div><p id="heroBio" style="color:var(--muted);font-size:13px">Sin descripción todavía. Editá tus datos base para agregar contexto.</p></div>
           <div class="card"><div class="card-top"><h4>Institución</h4><span class="badge blue">Académico</span></div><p id="heroInst" style="color:var(--muted);font-size:13px">—</p></div>
+        </div>
+        <div class="card mis-temas" id="misTemas">
+          <div class="card-top"><h4>Así quedaron clasificados tus temas</h4><span class="badge blue">Vocabulario</span></div>
+          <p class="cv-nota">Rizoma agrupa los temas en un vocabulario de dos niveles para que dos personas que dicen lo mismo con palabras distintas se encuentren. Revisá cómo quedaron; si algo no te representa, corregilo con «Editar perfil».</p>
+          <div id="misTemasLista"><div class="spinner"></div></div>
         </div>
         <div class="card recursos-mios" id="misRecursos">
           <div class="card-top"><h4>Pongo a disposición</h4><span class="badge blue">Recursos</span></div>
@@ -603,7 +616,7 @@
   Rizoma · Producto de Open Lab, con Maximiliano Perez.
 </footer>
 
-<script src="static/js/app.js?v=20261025-recursos"></script>
+<script src="static/js/app.js?v=20261031-mejoras"></script>
 </body>
 </html>
 

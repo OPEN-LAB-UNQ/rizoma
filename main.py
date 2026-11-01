@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.INFO)
 
 app = FastAPI(
     title="Rizoma API",
-    version="2.1.1",
+    version="2.2.0",
     docs_url=None if settings.environment == "production" else "/docs",
     redoc_url=None if settings.environment == "production" else "/redoc",
     openapi_url=None if settings.environment == "production" else "/openapi.json",
@@ -71,7 +71,7 @@ app.include_router(recursos.router)
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "app": "rizoma", "version": "2.1.1"}
+    return {"status": "ok", "app": "rizoma", "version": "2.2.0"}
 
 
 @app.head("/health")

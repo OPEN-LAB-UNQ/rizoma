@@ -729,3 +729,20 @@ header{grid-template-columns:minmax(220px,280px) minmax(0,1fr) auto;padding:8px 
 .seg-botones{display:flex;gap:6px;flex-wrap:wrap}
 .seg-botones .btn{padding:6px 12px;font-size:12.5px}
 @media(max-width:700px){.recurso-fila{grid-template-columns:1fr}}
+/* Tarjetas de sugerencias: en una fila de alturas distintas el grid interno estiraba
+   «Conversar» y los botones de resultado; ahora quedan a su altura, al pie de la tarjeta. */
+.rizoma-person{display:flex;flex-direction:column;gap:9px}
+.rizoma-person>*{flex:0 0 auto}
+.rizoma-person>.btn{margin-top:auto!important;min-height:0;padding:10px 16px}
+.rizoma-person .outcome-actions button{min-height:32px;height:auto}
+
+
+/* Carga guiada sin CV y temas clasificados (traído de Rizoma Afadeco) */
+.carga-guiada{margin-top:12px;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;background:var(--soft)}
+.carga-guiada summary{cursor:pointer;font-weight:800;color:var(--ink);font-size:13px}
+.carga-guiada label{display:grid;gap:4px;font-size:12.5px;font-weight:700;color:var(--ink);margin:8px 0}
+.carga-guiada input{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;font-weight:400;color:var(--ink)}
+.mis-temas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+.mi-tema{border:1px solid var(--line);border-left:3px solid var(--primary);border-radius:10px;padding:8px 10px;background:var(--panel)}
+.mi-tema strong{display:block;font-size:13px;color:var(--ink)}
+.mi-tema small{display:block;font-size:11.5px;color:var(--muted)}

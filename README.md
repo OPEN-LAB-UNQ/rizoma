@@ -7,7 +7,7 @@
 
 ## Cómo funciona
 
-1. **Cada persona carga su currículum o su trayectoria.** Antes de que un modelo de lenguaje lo lea, ve una copia sin nombre, correo, teléfonos, documentos, direcciones ni enlaces, y la puede corregir (`services/privacy_service.py`).
+1. **Cada persona carga su currículum o su trayectoria.** Antes de que un modelo de lenguaje lo lea, ve una copia sin nombre, correo, teléfonos, documentos, direcciones ni enlaces, y la puede corregir (`services/privacy_service.py`). Si no tiene el CV a mano, responde tres preguntas: qué sabe hacer, qué quiere aprender y qué le interesa. Después puede revisar cómo quedaron clasificados sus temas.
 2. **Se arma un grafo bipartito persona–tema** con tres relaciones: lo que sabe, lo que quiere aprender y lo que le interesa. Los temas se normalizan en un vocabulario controlado de dos niveles, así dos personas que dicen lo mismo con palabras distintas se encuentran.
 3. **La red sugiere con quién conversar.** El orden lo calcula el grafo, no el modelo:
    - pesa la **rareza** de los temas, no la cercanía (un tema que declaran dos personas de dieciséis dice más que uno que declaran casi todas);

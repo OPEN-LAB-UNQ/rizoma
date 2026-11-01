@@ -485,6 +485,22 @@ def red_completa(
     return rizoma_service.red_completa(db, user, grafo=g)
 
 
+@router.get("/me/temas")
+def mis_temas(user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Cómo quedaron clasificados los temas de la persona (macroárea · subtema), para que los revise."""
+    filas = (db.query(models.UserTopic, models.Topic)
+             .join(models.Topic, models.Topic.id == models.UserTopic.topic_id)
+             .filter(models.UserTopic.user_id == user.id).all())
+    nombres = {"offers": "Sabés", "wants": "Querés aprender", "interest": "Te interesa"}
+    salida = {}
+    for ut, t in filas:
+        d = salida.setdefault(t.id, {"tema": t.label, "macro": t.macro or "", "subtema": t.subtema or "", "relaciones": []})
+        relacion = nombres.get(ut.relation, ut.relation)
+        if relacion not in d["relaciones"]:
+            d["relaciones"].append(relacion)
+    return sorted(salida.values(), key=lambda x: (x["macro"] or "~", x["subtema"] or "~", x["tema"]))
+
+
 @router.get("/me/rizoma-grafo")
 def rizoma_grafo(
     user: models.User = Depends(get_current_user),
