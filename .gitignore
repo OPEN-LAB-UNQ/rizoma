@@ -6,3 +6,4 @@ backups/
 *.log
 .claude/
 static/video/
+.venv/

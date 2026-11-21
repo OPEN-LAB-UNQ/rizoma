@@ -9,4 +9,4 @@ WorkingDirectory=/home/alma-academica
 Environment=PYTHONPATH=/home/alma-academica
 Nice=19
 IOSchedulingClass=idle
-ExecStart=/usr/bin/python3 /home/alma-academica/scripts/privacidad_revision.py
+ExecStart=/home/alma-academica/.venv/bin/python /home/alma-academica/scripts/privacidad_revision.py

@@ -34,7 +34,7 @@
 
 ## Tecnología
 
-- Python 3.9+, [FastAPI](https://fastapi.tiangolo.com/), SQLAlchemy.
+- Python 3.14 (probado también con 3.9), [FastAPI](https://fastapi.tiangolo.com/), SQLAlchemy 2.0.
 - PostgreSQL con [pgvector](https://github.com/pgvector/pgvector) y `pgcrypto`.
 - NetworkX para el análisis de la red.
 - Modelos de lenguaje y de *embeddings* por API (OpenAI y Anthropic), configurables.
@@ -48,8 +48,8 @@ createdb rizoma
 psql -d rizoma -c "CREATE EXTENSION IF NOT EXISTS vector; CREATE EXTENSION IF NOT EXISTS pgcrypto;"
 
 # 2. Dependencias
-python3 -m venv .venv && . .venv/bin/activate
-pip install -r requirements.txt
+python3.14 -m venv .venv && . .venv/bin/activate
+pip install -r requirements.txt        # versiones probadas; para las pruebas: requirements-dev.txt
 
 # 3. Configuración
 cp .env.example .env    # completar DATABASE_URL, SECRET_KEY y, si se usan, las claves de los modelos
@@ -64,6 +64,7 @@ Perfiles ficticios para probar: `scripts/conjunto_demo.py` y `scripts/recursos_d
 ## Pruebas
 
 ```bash
+pip install -r requirements-dev.txt
 python -m pytest -q tests
 ```
 
