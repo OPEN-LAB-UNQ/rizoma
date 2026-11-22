@@ -42,6 +42,16 @@ TIPOS = {
 RESULTADOS = {"hablamos": "Hablamos", "sirvio": "Sirvió", "no_sirvio": "No sirvió"}
 DIAS_SEGUIMIENTO = 14
 MAX_RECURSOS, MAX_TEMAS = 8, 5
+# Cajón del vocabulario para lo que no encaja: compartirlo no dice nada, así que no sugiere.
+SUBTEMAS_SIN_SENTIDO = {"temas diversos", "intereses variados", "habilidades no clasificadas"}
+
+
+def subtema_util(tema) -> str:
+    """Subtema que sirve para cruzar recursos, o cadena vacía si es el cajón «Otros»."""
+    sub = (getattr(tema, "subtema", None) or "").strip()
+    if not sub or getattr(tema, "macro", None) == "Otros" or sub.lower() in SUBTEMAS_SIN_SENTIDO:
+        return ""
+    return sub
 
 
 def _texto(valor, largo):
@@ -152,8 +162,8 @@ def para_mi(db: Session, user, limite: int = 6) -> list:
     sub_mio = {}
     for slug, por in busco.items():
         t = red.por_slug.get(slug)
-        if t and t.subtema:
-            sub_mio.setdefault(t.subtema, (t.label, por))
+        if subtema_util(t):
+            sub_mio.setdefault(subtema_util(t), (t.label, por))
     salida = []
     for p in red.personas.values():
         if p.id == user.id:
@@ -168,8 +178,9 @@ def para_mi(db: Session, user, limite: int = 6) -> list:
             if not motivo:
                 for tema in r["temas"]:
                     t = red.por_slug.get(slugify(tema))
-                    if t and t.subtema in sub_mio:
-                        motivo, puntaje = f"Mismo subtema ({t.subtema}) que «{sub_mio[t.subtema][0]}», que {sub_mio[t.subtema][1]}", 1
+                    sub = subtema_util(t)
+                    if sub and sub in sub_mio:
+                        motivo, puntaje = f"Mismo subtema ({sub}) que «{sub_mio[sub][0]}», que {sub_mio[sub][1]}", 1
                         break
             if motivo:
                 salida.append((puntaje, red.tarjeta(p, r, cuenta, mios, motivo)))
