@@ -44,3 +44,12 @@ def test_recursos_que_tiene_cualquiera_y_acceso_con_proposito():
 def test_resultados_del_seguimiento():
     assert set(rs.RESULTADOS) == {"hablamos", "sirvio", "no_sirvio"}
     assert rs.DIAS_SEGUIMIENTO == 14
+
+
+def test_el_cajon_otros_no_cruza_recursos():
+    from types import SimpleNamespace as T
+    assert rs.subtema_util(T(macro="Salud y Bienestar", subtema="atención primaria")) == "atención primaria"
+    assert rs.subtema_util(T(macro="Otros", subtema="temas diversos")) == ""
+    assert rs.subtema_util(T(macro="Sostenibilidad y Agroecología", subtema="Temas diversos")) == ""
+    assert rs.subtema_util(T(macro=None, subtema=None)) == ""
+    assert rs.subtema_util(None) == ""
