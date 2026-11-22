@@ -8,7 +8,7 @@ psycopg2-binary==2.9.13
 pydantic==2.14.4
 pydantic-settings==2.16.3
 email-validator==2.4.0
-python-jose==3.5.0
+PyJWT==2.15.1
 bcrypt==5.0.0
 python-multipart==0.0.34
 anthropic==2.12.0
