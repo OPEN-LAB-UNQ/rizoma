@@ -53,13 +53,24 @@ pip install -r requirements.txt        # versiones probadas; para las pruebas: r
 
 # 3. Configuración
 cp .env.example .env    # completar DATABASE_URL, SECRET_KEY y, si se usan, las claves de los modelos
+# SECRET_KEY (obligatoria, 32 caracteres o más):
+python -c "import secrets; print(secrets.token_urlsafe(48))"
 
-# 4. Tablas: se crean al iniciar; después aplicar los ajustes de sql/ en orden
+# 4. Iniciar: en una base vacía crea las tablas
 uvicorn main:app --host 127.0.0.1 --port 8000
+# 5. En otra terminal, aplicar los ajustes de sql/ en orden de fecha y reiniciar
 for f in sql/*.sql; do psql -d rizoma -f "$f"; done
 ```
 
+La cookie de sesión es `Secure`: fuera de `localhost`, publicar la aplicación con HTTPS detrás de un servidor web que envíe `X-Forwarded-For`.
+
 Perfiles ficticios para probar: `scripts/conjunto_demo.py` y `scripts/recursos_demo.py` (solo cuentas `demo.*@rizoma.local`).
+
+## Actualizar una instalación
+
+Respaldar la base, actualizar el código y las dependencias, aplicar los archivos nuevos de `sql/` **antes** de reiniciar y correr las pruebas.
+
+Desde la versión 2.2 a la 2.3 hay que aplicar `sql/2026_11_26_autorizacion_institucional.sql`. Las sesiones anteriores dejan de valer, y las cuentas de docente u organización y las credenciales verificadas quedan pendientes hasta que la administración las habilite (ver [SECURITY.md](SECURITY.md)).
 
 ## Pruebas
 
@@ -67,6 +78,8 @@ Perfiles ficticios para probar: `scripts/conjunto_demo.py` y `scripts/recursos_d
 pip install -r requirements-dev.txt
 python -m pytest -q tests
 ```
+
+Usar siempre una base temporal. Las pruebas que recrean las tablas exigen que su nombre contenga `rizoma_security_test_`.
 
 ## Estructura
 
@@ -85,8 +98,16 @@ python -m pytest -q tests
 
 Prototipo para generar redes. Las sugerencias son hipótesis para conversar, no decisiones: validarlas exige personas reales evaluando los vínculos a ciegas. Todos los perfiles incluidos en este repositorio son ficticios.
 
+## Participar
+
+- [Cómo contribuir](CONTRIBUTING.md)
+- [Código de conducta](CODE_OF_CONDUCT.md)
+- [Seguridad](SECURITY.md): las vulnerabilidades se informan en privado.
+
 ## Autoría y licencia
 
 Maximiliano Ariel Pérez, Ana Belén Gómez Reyes y Enrique Álvarez.
+
+Contacto de mantenimiento: <maximilianoperez1981@gmail.com>.
 
 Código bajo licencia [MIT](LICENSE). Las tipografías de `static/fonts/` tienen sus propias licencias (SIL Open Font License), incluidas en esa carpeta.

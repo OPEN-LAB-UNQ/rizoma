@@ -1,4 +1,8 @@
-﻿ALTER TYPE match_target_type ADD VALUE IF NOT EXISTS 'ai_suggestion';
+-- En una instalación nueva la columna es texto y el tipo no existe.
+SELECT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'match_target_type') AS hay_tipo \gset
+\if :hay_tipo
+ALTER TYPE match_target_type ADD VALUE IF NOT EXISTS 'ai_suggestion';
+\endif
 
 BEGIN;
 
@@ -50,6 +54,11 @@ GROUP BY 1
 ORDER BY 1;
 
 COMMIT;
+-- Solo si existe el usuario de base «alma» (instalación de OPEN LAB).
+SELECT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'alma'
+               AND pg_has_role(current_user, oid, 'MEMBER')) AS hay_alma \gset
+\if :hay_alma
 GRANT SELECT, INSERT, UPDATE, DELETE ON match_candidates, ai_match_suggestions TO alma;
 GRANT SELECT ON dashboard_metricas TO alma;
+\endif
 

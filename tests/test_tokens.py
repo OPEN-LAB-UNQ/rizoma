@@ -1,4 +1,5 @@
 """Tokens de sesión con PyJWT (HS256): válidos, vencidos, alterados y sin firma."""
+from types import SimpleNamespace
 import base64
 import json
 from datetime import datetime, timedelta, timezone
@@ -26,7 +27,7 @@ class _Consulta:
 class _Base:
     """Base mínima: devuelve siempre el mismo usuario, sin tocar PostgreSQL."""
 
-    def __init__(self, usuario="persona"):
+    def __init__(self, usuario=SimpleNamespace(role="student", sessions_valid_after=0)):
         self.usuario = usuario
 
     def query(self, _modelo):
@@ -42,7 +43,7 @@ def test_token_emitido_se_acepta():
     token = auth.create_access_token("1b4e28ba-2fa1-11d2-883f-0016d3cca427")
     assert isinstance(token, str)
     assert jwt.decode(token, settings.secret_key, algorithms=["HS256"])["sub"] == "1b4e28ba-2fa1-11d2-883f-0016d3cca427"
-    assert _usar(token) == "persona"
+    assert _usar(token).role == "student"
 
 
 def test_token_vencido_se_rechaza():

@@ -29,6 +29,11 @@ ALTER TABLE topics ADD COLUMN IF NOT EXISTS clasificacion_bloqueada BOOLEAN NOT 
 CREATE INDEX IF NOT EXISTS ix_topics_macro ON topics(macro);
 CREATE INDEX IF NOT EXISTS ix_topics_subtema ON topics(subtema);
 
+-- Solo si existe el usuario de base «alma» (instalación de OPEN LAB).
+SELECT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'alma'
+               AND pg_has_role(current_user, oid, 'MEMBER')) AS hay_alma \gset
+\if :hay_alma
 ALTER TABLE topic_vocabulary OWNER TO alma;
+\endif
 
 COMMIT;

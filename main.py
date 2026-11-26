@@ -16,12 +16,14 @@ from database import Base, engine, SessionLocal
 import models
 from routers import auth, users, projects, credentials, copilot, messages, feed, notifications, actividades, red, privacidad, recursos
 from services import privacy_notice
+from services.browser_security import check_origin, content_policy
+from routers import admin_security
 
 logging.basicConfig(level=logging.INFO)
 
 app = FastAPI(
     title="Rizoma API",
-    version="2.2.0",
+    version="2.3.0",
     docs_url=None if settings.environment == "production" else "/docs",
     redoc_url=None if settings.environment == "production" else "/redoc",
     openapi_url=None if settings.environment == "production" else "/openapi.json",
@@ -40,7 +42,11 @@ app.add_middleware(
 
 @app.middleware("http")
 async def security_headers(request: Request, call_next):
+    rejection = check_origin(request)
+    if rejection is not None:
+        return rejection
     response = await call_next(request)
+    response.headers["Content-Security-Policy"] = content_policy()
     # Las respuestas de la API y de autenticación traen datos personales: que no
     # queden en la caché del navegador ni de intermediarios.
     if (request.url.path == "/" or response.headers.get("content-type", "").startswith("text/html")
@@ -56,6 +62,7 @@ async def security_headers(request: Request, call_next):
     return response
 
 app.include_router(auth.router)
+app.include_router(admin_security.router)
 app.include_router(users.router)
 app.include_router(projects.router)
 app.include_router(credentials.router)
@@ -71,7 +78,7 @@ app.include_router(recursos.router)
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "app": "rizoma", "version": "2.2.0"}
+    return {"status": "ok", "app": "rizoma", "version": "2.3.0"}
 
 
 @app.head("/health")
@@ -164,7 +171,7 @@ def _seed(db: Session):
         email="sistema@rizoma.entornodepruebas.com.ar",
         password_hash="$2b$12$disabled",
         name="Sistema Rizoma",
-        role="org",
+        role="student",
         institution="Rizoma",
     )
     db.add(system_user)
@@ -226,7 +233,7 @@ if STATIC_DIR.exists():
             credential = (
                 db.query(models.Credential)
                 .options(joinedload(models.Credential.project))
-                .filter(models.Credential.id == credential_id, models.Credential.verified == True)
+                .filter(models.Credential.id == credential_id, models.Credential.verified == True, models.Credential.verified_by.is_not(None))
                 .first()
             )
             if not credential:

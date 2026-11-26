@@ -95,23 +95,63 @@
       section { padding:34px 0; }
       .bajada { font-size:19px; }
     }
+  
+/* Presentaciones de OPEN LAB: componente compartido, sin dependencias externas. */
+.ol-family { padding:48px 0; border-top:1px solid var(--line, #dedee4); color:var(--ink, #242329); }
+.ol-family-inner { width:min(100% - 40px, 1120px); margin-inline:auto; }
+.ol-family .ol-kicker { margin:0 0 10px; font-size:.875rem; font-weight:700; line-height:1.5; letter-spacing:.07em; text-transform:uppercase; color:var(--muted, #565866); }
+.ol-family h2 { margin:0 0 14px; font-size:clamp(1.6rem, 3vw, 2.2rem); line-height:1.2; }
+.ol-family .ol-intro { max-width:760px; margin:0 0 26px; font-size:1rem; line-height:1.65; }
+.ol-programs { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:18px; }
+.ol-program { display:flex; flex-direction:column; min-width:0; padding:24px; border:1px solid var(--line, #dedee4); border-top:3px solid var(--ol-accent); border-radius:14px; background:var(--panel, var(--card, #fff)); }
+.ol-program h3 { margin:0 0 10px; font-size:1.25rem; line-height:1.25; }
+.ol-program p { margin:0 0 20px; font-size:1rem; line-height:1.6; color:var(--muted, #565866); }
+.ol-program a { margin-top:auto; padding:8px 0; font-size:.9375rem; font-weight:700; color:var(--ink, #242329); text-decoration:underline; text-underline-offset:4px; }
+.ol-program a:focus-visible, .ol-origin:focus-visible { outline:3px solid var(--ol-accent, #285bb4); outline-offset:4px; border-radius:3px; }
+.ol-current { margin-top:auto; padding:8px 0; font-size:.9375rem; font-weight:600; color:var(--muted, #565866); }
+.ol-origin { color:inherit; text-decoration:underline; text-underline-offset:4px; }
+.ol-family .ol-rizoma { --ol-accent:#c8102e; }
+.ol-family .ol-gov { --ol-accent:#285bb4; }
+.ol-family .ol-desarrollo { --ol-accent:#b01c2e; }
+@media (max-width:760px) { .ol-programs { grid-template-columns:1fr; } .ol-family { padding:36px 0; } }
+
+    .ol-family-inner { width:100%; }
+    .presentacion-skip { position:absolute; left:20px; top:-100px; padding:12px 18px; background:var(--panel); color:var(--ink); z-index:20; }
+    .presentacion-skip:focus { top:12px; }
+    .principio { font-weight:700; margin:0 0 24px; }
+    .inicio-nota { margin:0 0 14px; font-size:15px; color:var(--muted); }
+    .indice { position:relative; border-top:1px solid var(--line); }
+    .contacto-piloto { padding:28px; border:1px solid var(--line); border-radius:16px; background:var(--panel); }
+    .contacto-piloto p { max-width:760px; }
+    .contacto-piloto a { overflow-wrap:anywhere; }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
   </style>
 </head>
 <body>
+<a class="presentacion-skip" href="#contenido">Ir al contenido</a>
 <div class="franja"></div>
 <header class="top">
   <a class="marca" href="/presentacion">Rizoma</a>
   <a class="boton" href="/">Ingresar</a>
 </header>
-<main>
+<main id="contenido">
+  <nav class="indice" aria-label="Navegación principal">
+    <a href="#que-es">Propuesta</a>
+    <a href="#ia">Cómo funciona</a>
+    <a href="#para-que">Ejemplos</a>
+    <a href="#medir">Evidencia</a>
+    <a href="#contacto">Cómo empezar</a>
+  </nav>
   <div class="hero">
     <div class="hero-texto">
-      <p class="seccion-rot">Un prototipo para generar redes</p>
+      <p class="seccion-rot">Saberes y colaboración · Prototipo</p>
       <h1>Emergen las conexiones</h1>
-      <p class="bajada">Rizoma conecta personas por lo que cada una sabe, lo que quiere aprender y lo que le interesa, aunque el vínculo pase por otra persona. Te muestra con quién conviene conversar y por qué.</p>
+      <p class="bajada">En una comunidad hay saberes que todavía no se encontraron. Rizoma conecta personas por lo que saben, lo que quieren aprender y lo que les interesa, incluso a través de vínculos indirectos.</p>
+      <p class="principio">La red sugiere conexiones. Las personas deciden qué hacer con ellas.</p>
+      <p class="inicio-nota"><a class="ol-origin" href="#openlab-programas">OPEN LAB · Universidad Nacional de Quilmes</a></p>
       <div class="acciones">
-        <a class="boton" href="/">Ingresar a Rizoma</a>
-        <a class="boton sec" href="#para-que">Para qué puede servir</a>
+        <a class="boton" href="#un-encuentro">Ver un ejemplo</a>
+        <a class="boton sec" href="#contacto">Proponer un piloto</a>
       </div>
       <p class="aviso">Las pantallas de esta página y del video son de una demostración con perfiles ficticios.</p>
     </div>
@@ -131,17 +171,21 @@
     </figure>
   </div>
 
-  <nav class="indice" aria-label="Secciones">
-    <a href="#que-es">Qué es</a>
-    <a href="#base-de-datos">Base de datos</a>
-    <a href="#para-que">Para qué sirve</a>
-    <a href="#ia">IA</a>
-    <a href="#privacidad">Privacidad</a>
-    <a href="#medir">Cómo medirlo</a>
-  </nav>
+
+
+  <section id="un-encuentro" aria-labelledby="encuentro-titulo">
+    <p class="seccion-rot">Un ejemplo · Situación ilustrativa</p>
+    <h2 id="encuentro-titulo">De una necesidad a una conversación.</h2>
+    <p>Una comunidad reúne saberes que no siempre se conocen entre sí. Rizoma permite explorar quién podría aportar a una necesidad y por qué aparece esa conexión.</p>
+    <div class="pasos">
+      <div class="paso"><div class="n">1 · LA NECESIDAD</div><h3>Querés mejorar los turnos.</h3><p>En una actividad de salud necesitás conversar con alguien que conozca cómo organizar un sistema de turnos.</p></div>
+      <div class="paso"><div class="n">2 · LA CONEXIÓN</div><h3>Encontrás un camino.</h3><p>La red muestra vínculos entre personas, temas y organizaciones: una conexión puede aparecer aunque los perfiles no compartan las mismas palabras.</p></div>
+      <div class="paso"><div class="n">3 · EL ENCUENTRO</div><h3>Deciden si vale la pena conversar.</h3><p>Las personas contrastan la sugerencia. El piloto permitirá evaluar si ese encuentro resulta útil y da lugar a una colaboración.</p></div>
+    </div>
+  </section>
 
   <section id="que-es">
-    <p class="seccion-rot">¿Qué es Rizoma?</p>
+    <p class="seccion-rot">La propuesta</p>
     <h2>Una red de saberes, no un perfil para exhibir</h2>
     <div class="pasos">
       <div class="paso"><div class="n">1 · CARGÁS</div><h3>Tu currículum o tu trayectoria</h3><p>Antes de que la inteligencia artificial lo lea, ves una copia sin tu nombre, tu correo ni tus teléfonos, y la podés corregir.</p></div>
@@ -161,36 +205,22 @@
     </div>
   </section>
 
-  <section id="base-de-datos">
-    <p class="seccion-rot">¿Qué es Rizoma?</p>
-    <h2>¿Por qué no alcanza con una base de datos?</h2>
-    <div class="comparacion">
-      <div class="col">
-        <h3>Una base de datos</h3>
-        <ul>
-          <li>Responde quién trabaja qué.</li>
-          <li>Hay que saber qué buscar.</li>
-          <li>Encuentra palabras iguales.</li>
-          <li>Guarda lo que cada quien sabe.</li>
-          <li>Cada quien figura con lo suyo.</li>
-        </ul>
+  <section id="ia">
+    <p class="seccion-rot">Cómo funciona · IA y decisión humana</p>
+    <h2>El orden lo calcula el grafo</h2>
+    <div class="dos">
+      <div>
+        <p>La inteligencia artificial extrae los temas del currículum. El orden de las sugerencias sale de la estructura de la red. El modelo de lenguaje solo redacta la explicación, y solo cuando alguien la pide.</p>
+        <p>¿Por qué no dejar que el modelo decida? Porque como juez no sirve: aprueba casi cualquier par, incluso pares elegidos al azar. Reconoce el parecido, pero ante los vínculos indirectos casi no se distingue del azar.</p>
       </div>
-      <div class="col rz">
-        <h3>Rizoma</h3>
-        <ul>
-          <li>Dice con quién te conviene hablar, y por qué.</li>
-          <li>Te muestra a quien no sabías que existía.</li>
-          <li>Sigue caminos indirectos por la red.</li>
-          <li>Guarda también lo que cada persona quiere aprender.</li>
-          <li>Pone recursos en común, aunque nadie sepa todavía para qué.</li>
-        </ul>
-      </div>
+      <figure class="captura" style="margin-top:0"><img src="/static/img/presentacion/explicacion-pedido.webp" width="1400" height="595" alt="Explicación de una sugerencia, redactada a pedido" loading="lazy"><figcaption>La explicación se redacta solo cuando se la pide.</figcaption></figure>
     </div>
   </section>
 
   <section id="para-que">
-    <p class="seccion-rot">¿Para qué puede servir?</p>
+    <p class="seccion-rot">Ejemplos de uso</p>
     <h2>Cinco posibilidades, y cada una funciona sola</h2>
+    <p>Estos ejemplos usan perfiles ficticios para mostrar cómo funciona la aplicación.</p>
     <ol class="menu">
       <li><a href="#op1"><span class="num">1</span>Con quién conversar</a></li>
       <li><a href="#op2"><span class="num">2</span>Actividades emergentes</a></li>
@@ -235,15 +265,62 @@
     </div>
   </section>
 
-  <section id="ia">
-    <p class="seccion-rot">¿Y la inteligencia artificial?</p>
-    <h2>El orden lo calcula el grafo</h2>
-    <div class="dos">
-      <div>
-        <p>La inteligencia artificial extrae los temas del currículum. El orden de las sugerencias sale de la estructura de la red. El modelo de lenguaje solo redacta la explicación, y solo cuando alguien la pide.</p>
-        <p>¿Por qué no dejar que el modelo decida? Porque como juez no sirve: aprueba casi cualquier par, incluso pares elegidos al azar. Reconoce el parecido, pero ante los vínculos indirectos casi no se distingue del azar.</p>
+  <section id="medir">
+    <p class="seccion-rot">Evidencia y límites</p>
+    <h2>Qué muestra la demostración y qué falta evaluar</h2>
+    <p>Las capturas y el video muestran el funcionamiento con perfiles ficticios. Por sí solos no demuestran que las sugerencias produzcan colaboraciones útiles. Para evaluarlo, la propuesta es un piloto con medidas fijadas de antemano.</p>
+    <p>Cada sugerencia es una hipótesis para conversar, no un veredicto. Validarla exige personas reales evaluando los vínculos. La propuesta:</p>
+    <ul class="medidas">
+      <li>Se eligen las posibilidades que interesan y se prueban con una cohorte acotada.</li>
+      <li>Antes de empezar se fija qué cuenta como éxito: por ejemplo, cuántas sugerencias despiertan interés en las dos partes y cuántas terminan en una conversación.</li>
+      <li>Las personas evalúan los vínculos <strong>a ciegas</strong>, sin saber si vienen de Rizoma o de una búsqueda común. Rizoma sirve si le gana a esa búsqueda.</li>
+      <li>Se cuenta, sin nombres, lo que cada parte responde a las dos semanas de un «me sirve»: si hablaron y si sirvió.</li>
+    </ul>
+    <figure class="captura"><img src="/static/img/presentacion/ciegas.webp" width="1400" height="521" alt="Evaluación humana a ciegas de los vínculos sugeridos" loading="lazy"></figure>
+    <p class="nota">Para profundizar: <a href="#base-de-datos">qué aporta el grafo</a> y <a href="#privacidad">cómo se cuida la visibilidad de cada persona</a>.</p>
+  </section>
+
+  <section id="contacto" aria-labelledby="contacto-titulo">
+    <div class="contacto-piloto">
+      <p class="seccion-rot">Cómo empezar</p>
+      <h2 id="contacto-titulo">Traé una comunidad que quieras conectar.</h2>
+      <p>Contanos quiénes participarían y qué les gustaría hacer juntos. Podemos conversar sobre una prueba acotada y acordar qué observar para saber si las conexiones resultan útiles.</p>
+      <h3>Qué hace falta para empezar</h3>
+      <ul>
+        <li><strong>Una comunidad concreta:</strong> una red, un equipo o un programa cuyos integrantes quieran participar.</li>
+        <li><strong>Una persona que coordine:</strong> para acompañar la incorporación, mantener los perfiles y facilitar los primeros encuentros.</li>
+        <li><strong>Recursos y cuidados acordados:</strong> tiempo de participación y seguimiento, soporte técnico y decisiones sobre los datos que se comparten.</li>
+        <li><strong>Una pregunta para evaluar:</strong> si las sugerencias generan conversaciones útiles, comparadas con la forma habitual de encontrar personas.</li>
+      </ul>
+      <div class="acciones"><a class="boton" href="mailto:maximilianoperez1981@gmail.com?subject=Piloto%20de%20Rizoma">Conversar sobre un piloto</a><a class="boton sec" href="/">Ingresar a Rizoma</a></div>
+      <p class="aviso">Contacto: <a href="mailto:maximilianoperez1981@gmail.com">maximilianoperez1981@gmail.com</a></p>
+    </div>
+  </section>
+
+  <section id="base-de-datos">
+    <p class="seccion-rot">La propuesta</p>
+    <h2>¿Por qué no alcanza con una base de datos?</h2>
+    <div class="comparacion">
+      <div class="col">
+        <h3>Una base de datos</h3>
+        <ul>
+          <li>Responde quién trabaja qué.</li>
+          <li>Hay que saber qué buscar.</li>
+          <li>Encuentra palabras iguales.</li>
+          <li>Guarda lo que cada quien sabe.</li>
+          <li>Cada quien figura con lo suyo.</li>
+        </ul>
       </div>
-      <figure class="captura" style="margin-top:0"><img src="/static/img/presentacion/explicacion-pedido.webp" width="1400" height="595" alt="Explicación de una sugerencia, redactada a pedido" loading="lazy"><figcaption>La explicación se redacta solo cuando se la pide.</figcaption></figure>
+      <div class="col rz">
+        <h3>Rizoma</h3>
+        <ul>
+          <li>Dice con quién te conviene hablar, y por qué.</li>
+          <li>Te muestra a quien no sabías que existía.</li>
+          <li>Sigue caminos indirectos por la red.</li>
+          <li>Guarda también lo que cada persona quiere aprender.</li>
+          <li>Pone recursos en común, aunque nadie sepa todavía para qué.</li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -259,19 +336,18 @@
     </div>
   </section>
 
-  <section id="medir">
-    <p class="seccion-rot">¿Cómo sabremos si sirve?</p>
-    <h2>Un piloto, con medidas fijadas de antemano</h2>
-    <p>Cada sugerencia es una hipótesis para conversar, no un veredicto. Validarla exige personas reales evaluando los vínculos. La propuesta:</p>
-    <ul class="medidas">
-      <li>Se eligen las posibilidades que interesan y se prueban con una cohorte acotada.</li>
-      <li>Antes de empezar se fija qué cuenta como éxito: por ejemplo, cuántas sugerencias despiertan interés en las dos partes y cuántas terminan en una conversación.</li>
-      <li>Las personas evalúan los vínculos <strong>a ciegas</strong>, sin saber si vienen de Rizoma o de una búsqueda común. Rizoma sirve si le gana a esa búsqueda.</li>
-      <li>Se cuenta, sin nombres, lo que cada parte responde a las dos semanas de un «me sirve»: si hablaron y si sirvió.</li>
-    </ul>
-    <figure class="captura"><img src="/static/img/presentacion/ciegas.webp" width="1400" height="521" alt="Evaluación humana a ciegas de los vínculos sugeridos" loading="lazy"></figure>
-    <div class="nota">¿Te interesa probarlo en tu institución o en tu equipo? Escribinos a <a href="mailto:maximilianoperez1981@gmail.com">maximilianoperez1981@gmail.com</a>.</div>
-  </section>
+
+<section class="ol-family" id="openlab-programas" aria-labelledby="openlab-titulo">
+  <div class="ol-family-inner">
+    <p class="ol-kicker">OPEN LAB · Universidad Nacional de Quilmes</p>
+    <h2 id="openlab-titulo">Tres programas. Un criterio compartido.</h2>
+    <p class="ol-intro">Conectar saberes, llevar ideas a la práctica y acompañar el aprendizaje. En los tres programas, la tecnología aporta herramientas y las personas conservan el criterio y la decisión.</p>
+    <div class="ol-programs"><article class="ol-program ol-rizoma"><h3>Rizoma</h3><p>Conectar personas por sus saberes, sus intereses y lo que quieren aprender.</p><span class="ol-current">Estás en esta presentación</span></article>
+<article class="ol-program ol-gov"><h3>Gov4Action</h3><p>Revisar informes, formular proyectos y acompañar su implementación en equipos públicos.</p><a href="https://gov4action.com/presentacion">Conocer Gov4Action</a></article>
+<article class="ol-program ol-desarrollo"><h3>Desarrollo2</h3><p>Diseñar y acompañar actividades educativas con IA, con el estudiante y el docente al frente.</p><a href="https://desarrollo2.com/latam/presentacion">Conocer Desarrollo2</a></article></div>
+  </div>
+</section>
+
 
   <section id="privacidad-pagina" class="privacidad-pagina">
     <p class="seccion-rot">Cookies y privacidad de esta página</p>
@@ -285,7 +361,7 @@
   </section>
 </main>
 <footer>
-  <strong>Rizoma</strong> · Una aplicación de Open Lab, en la Universidad Nacional de Quilmes. Desarrollo: Maximiliano Ariel Pérez, Ana Belén Gómez Reyes y Enrique Álvarez.
+  <strong>Rizoma</strong> · Una aplicación de Open Lab, en la Universidad Nacional de Quilmes. Desarrollo: Maximiliano Ariel Pérez, Ana Belén Gómez Reyes y Enrique Álvarez. Código abierto con <a href="https://github.com/OPEN-LAB-UNQ/rizoma/blob/main/LICENSE" rel="noopener noreferrer">licencia MIT</a>.
   · <a href="#privacidad-pagina">Cookies y privacidad de esta página</a> · <a href="/privacidad">Aviso de privacidad</a> · <a href="/">Ingresar</a>
 </footer>
 <script>

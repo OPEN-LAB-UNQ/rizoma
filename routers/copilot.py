@@ -1,4 +1,4 @@
-﻿import re
+import re
 import zipfile
 from io import BytesIO
 from typing import Optional
@@ -13,6 +13,7 @@ from auth import get_current_user
 from database import get_db
 from services import embedding_service, privacy_notice, rizoma_service
 from services.limites import limitar
+from services.auth_limits import limit_cv
 from services.privacy_service import anonymize_text, identificadores_de_usuario, minimizar_con_detalle
 from services.claude_service import synthesize_profile, get_matches
 
@@ -98,21 +99,31 @@ def _decode_text(data: bytes) -> str:
     return data.decode("utf-8", errors="ignore")
 
 
+MAX_DOCX_XML_BYTES = 20 * 1024 * 1024
+
+
 def _extract_docx(data: bytes) -> str:
     try:
         with zipfile.ZipFile(BytesIO(data)) as zf:
-            xml = zf.read("word/document.xml")
-    except Exception:
-        raise HTTPException(400, "No pude leer el DOCX. Probá pegar el texto del CV.")
-    root = ET.fromstring(xml)
-    ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
-    parts = []
-    for p in root.findall(".//w:p", ns):
-        texts = [t.text or "" for t in p.findall(".//w:t", ns)]
-        line = "".join(texts).strip()
-        if line:
-            parts.append(line)
-    return "\n".join(parts)
+            if len(zf.infolist()) > 1024:
+                raise HTTPException(413,"DOCX con demasiados componentes")
+            info=zf.getinfo("word/document.xml")
+            if info.file_size > MAX_DOCX_XML_BYTES:
+                raise HTTPException(413,"El contenido descomprimido del DOCX supera 20 MB")
+            with zf.open(info) as stream:
+                xml=stream.read(MAX_DOCX_XML_BYTES+1)
+            if len(xml)>MAX_DOCX_XML_BYTES:
+                raise HTTPException(413,"El contenido descomprimido del DOCX supera 20 MB")
+        if b'<!DOCTYPE' in xml.upper() or b'<!ENTITY' in xml.upper():
+            raise HTTPException(400,"El DOCX contiene declaraciones XML no permitidas")
+        root=ET.fromstring(xml)
+    except HTTPException:
+        raise
+    except (zipfile.BadZipFile,KeyError,ET.ParseError,RuntimeError,ValueError,NotImplementedError):
+        raise HTTPException(400,"No pude leer el DOCX. Probá pegar el texto del CV.")
+    ns={"w":"http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+    return "\n".join(line for p in root.findall('.//w:p',ns)
+                     if (line:=''.join(t.text or '' for t in p.findall('.//w:t',ns)).strip()))
 
 
 def _extract_cv_text(filename: str, data: bytes) -> str:
@@ -233,7 +244,7 @@ async def vista_previa(
     """
     archivo = ""
     if file is not None and (file.filename or "").strip():
-        data = await file.read()
+        data = await file.read(MAX_CV_BYTES+1)
         texto = _extract_cv_text(file.filename, data)
         archivo = file.filename.rsplit(".", 1)[-1].lower()[:8] if "." in file.filename else ""
     copia, retirado = minimizar_con_detalle(texto, identificadores_de_usuario(user))
@@ -260,7 +271,8 @@ async def run_copilot_from_cv(
     user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    data = await file.read()
+    limit_cv(user,db)
+    data = await file.read(MAX_CV_BYTES+1)
     text = _extract_cv_text(file.filename or "cv", data).strip()
     return _run_from_text(text, user, db, source_filename=file.filename or "cv")
 

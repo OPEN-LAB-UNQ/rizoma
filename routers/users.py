@@ -208,6 +208,8 @@ def update_me(
     user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    if user.role in ('teacher','org') and body.institution is not None and body.institution != user.institution:
+        raise HTTPException(403,'La institución habilitada solo puede cambiarla administración')
     embedding_dirty = False
     embedding_fields = {"bio", "can_offer", "wants_to_learn", "interests"}
     for field in ("name", "institution", "bio", "can_offer", "wants_to_learn", "interests", "availability", "modality", "participation_goal", "commitment_level"):
