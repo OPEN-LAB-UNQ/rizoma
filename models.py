@@ -1,8 +1,8 @@
-﻿import uuid
+import uuid
 from datetime import datetime
 
 from sqlalchemy import (Boolean, Column, DateTime, Enum as SAEnum,
-                        Float, ForeignKey, Integer, JSON, String, Text)
+                        Float, ForeignKey, Integer, JSON, String, Text, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from pgvector.sqlalchemy import Vector
@@ -36,6 +36,9 @@ class User(Base):
     visibilidad = Column(JSON, default=dict, nullable=False)
     # Recursos que pone a disposición de la red (services/recursos_service.py). sql/2026_10_25_recursos.sql
     recursos = Column(JSON, default=list, nullable=False)
+
+    institution_verified = Column(Boolean, nullable=False, default=False, server_default="false")
+    sessions_valid_after = Column(Float, nullable=False, default=0, server_default="0")
 
     credentials = relationship("Credential", back_populates="user", foreign_keys="Credential.user_id")
     projects_created = relationship("Project", back_populates="creator")
@@ -134,6 +137,8 @@ class Credential(Base):
     description = Column(Text, default="")
     verified = Column(Boolean, default=False)
     verified_at = Column(DateTime, nullable=True)
+    verified_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    verification_note = Column(Text, default="")
     project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"), nullable=True)
     tags = Column(JSON, default=list)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -375,6 +380,7 @@ class PrivacyNotice(Base):
 class PrivacyAcknowledgment(Base):
     """Constancia de lectura de una versión del aviso. No es consentimiento para difusión."""
     __tablename__ = "privacy_acknowledgments"
+    __table_args__ = (UniqueConstraint("user_id", "notice_version", name="uq_privacy_ack_user_version"),)
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
@@ -409,3 +415,20 @@ class PrivacyPurgeAudit(Base):
     operator = Column(String(80), nullable=False)
     backup_reference = Column(Text, nullable=False)
     purged_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+class AuthLimit(Base):
+    __tablename__ = 'auth_limits'
+    bucket = Column(String(64),primary_key=True)
+    hits = Column(Integer,nullable=False)
+    expires_at = Column(Float,nullable=False)
+
+
+class SecurityAudit(Base):
+    __tablename__ = 'security_audit'
+    id = Column(UUID(as_uuid=True),primary_key=True,default=uuid.uuid4)
+    actor_id = Column(UUID(as_uuid=True),nullable=True)
+    subject_id = Column(UUID(as_uuid=True),nullable=True)
+    action = Column(String(80),nullable=False)
+    details = Column(JSON,nullable=False,default=dict)
+    created_at = Column(DateTime,default=datetime.utcnow)

@@ -61,16 +61,13 @@
       <div class="form-group"><label>Contraseña</label><input type="password" id="regPass" placeholder="Mínimo 10 caracteres"></div>
       <div class="form-group">
         <label>Rol</label>
-        <select id="regRole">
-          <option value="student">Estudiante</option>
-          <option value="teacher">Docente / Investigador</option>
-          <option value="org">Organización</option>
-        </select>
+        <select id="regRole" disabled><option value="student">Participante</option></select><small>Los permisos institucionales requieren habilitación de administración.</small>
       </div>
       <div class="form-group"><label>Institución</label><input type="text" id="regInst" placeholder="Ej: UNQ, UNLP, UBA..."></div>
       <label class="aviso-check"><input type="checkbox" id="regAviso"> Leí el <a href="/privacidad" target="_blank" rel="noopener">aviso de privacidad</a>. Esta confirmación no autoriza difusión ni usos adicionales de mis datos.</label>
       <button class="btn" style="width:100%" onclick="doRegister()">Crear cuenta</button>
     </div>
+    <p class="auth-privacidad"><a href="/presentacion">Conocer Rizoma antes de ingresar</a></p>
     <p class="auth-privacidad"><a href="/privacidad" target="_blank" rel="noopener">Privacidad y uso de los datos</a></p>
   </div>
 </div>
@@ -616,7 +613,7 @@
   Rizoma · Producto de Open Lab, con Maximiliano Perez.
 </footer>
 
-<script src="static/js/app.js?v=20261031-mejoras"></script>
+<script src="static/js/app.js?v=20261126-aviso"></script>
 </body>
 </html>
 

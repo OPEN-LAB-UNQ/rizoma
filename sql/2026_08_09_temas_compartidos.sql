@@ -34,8 +34,13 @@ CREATE INDEX IF NOT EXISTS ix_user_topics_topic ON user_topics(topic_id);
 CREATE INDEX IF NOT EXISTS ix_user_topics_user ON user_topics(user_id);
 CREATE INDEX IF NOT EXISTS ix_topic_aliases_topic ON topic_aliases(topic_id);
 
+-- Solo si existe el usuario de base «alma» (instalación de OPEN LAB).
+SELECT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'alma'
+               AND pg_has_role(current_user, oid, 'MEMBER')) AS hay_alma \gset
+\if :hay_alma
 ALTER TABLE topics OWNER TO alma;
 ALTER TABLE topic_aliases OWNER TO alma;
 ALTER TABLE user_topics OWNER TO alma;
+\endif
 
 COMMIT;

@@ -1,5 +1,6 @@
 // ── State ──────────────────────────────────────────────────────────────────────
-let authToken = localStorage.getItem('aa_token');
+localStorage.removeItem('aa_token');
+let authToken = true; // The HttpOnly session cookie is checked by bootApp.
 let currentUser = null;
 let latestCopilotMatches = [];
 let latestPeopleConnections = [];
@@ -45,7 +46,7 @@ async function pedir(url, opts) {
 function sesionVencida(r, url) {
   if (r.status !== 401 || url.startsWith('/auth/')) return false;
   const habiaSesion = Boolean(authToken);
-  logout();
+  limpiarSesionLocal();
   if (habiaSesion) showAuthError('Tu sesión venció. Ingresá de nuevo.');
   return true;
 }
@@ -74,7 +75,7 @@ function safeUrl(value) {
 // ── API helper ─────────────────────────────────────────────────────────────────
 async function api(method, url, body = null) {
   const opts = { method, headers: {} };
-  if (authToken) opts.headers['Authorization'] = `Bearer ${authToken}`;
+  opts.credentials = 'same-origin';
   if (body !== null) {
     opts.headers['Content-Type'] = 'application/json';
     opts.body = JSON.stringify(body);
@@ -90,7 +91,7 @@ async function api(method, url, body = null) {
 
 async function apiForm(url, formData) {
   const opts = { method: 'POST', headers: {} };
-  if (authToken) opts.headers['Authorization'] = `Bearer ${authToken}`;
+  opts.credentials = 'same-origin';
   opts.body = formData;
   const r = await pedir(url, opts);
   if (sesionVencida(r, url)) return null;
@@ -103,7 +104,7 @@ async function apiForm(url, formData) {
 // ── Privacidad ────────────────────────────────────────────────────────────────
 // Debe coincidir con NOTICE_VERSION (services/privacy_notice.py). Si no
 // coincide, el registro no deja constancia y el aviso se pide al ingresar.
-const AVISO_PRIVACIDAD_VERSION = '2026-10-25.2';
+const AVISO_PRIVACIDAD_VERSION = '2026-11-26.1';
 let avisoPrivacidadVersion = AVISO_PRIVACIDAD_VERSION;
 
 // Lo que esta aplicación deja en el navegador y se borra al salir o al cambiar de cuenta.
@@ -236,8 +237,7 @@ async function doLogin() {
     const data = await api('POST', '/auth/login', { email, password: pass });
     if (!data) return;
     limpiarDatosLocales();
-    authToken = data.access_token;
-    localStorage.setItem('aa_token', authToken);
+    authToken = true;
     await bootApp();
   } catch (e) {
     showAuthError(e.message);
@@ -248,7 +248,7 @@ async function doRegister() {
   const name = document.getElementById('regName').value.trim();
   const email = document.getElementById('regEmail').value.trim();
   const pass = document.getElementById('regPass').value;
-  const role = document.getElementById('regRole').value;
+  const role = 'student';
   const inst = document.getElementById('regInst').value.trim();
   if (!name || !email || !pass) { showAuthError('Completá todos los campos'); return; }
   if (!document.getElementById('regAviso').checked) { showAuthError('Para crear la cuenta, confirmá que leíste el aviso de privacidad.'); return; }
@@ -256,15 +256,27 @@ async function doRegister() {
     const data = await api('POST', '/auth/register', { name, email, password: pass, role, institution: inst, aviso_version: AVISO_PRIVACIDAD_VERSION });
     if (!data) return;
     limpiarDatosLocales();
-    authToken = data.access_token;
-    localStorage.setItem('aa_token', authToken);
-    await bootApp();
+    authToken = null;
+    switchAuthTab('login');
+    document.getElementById('loginEmail').value = email;
+    showAuthError(data.message);
   } catch (e) {
     showAuthError(e.message);
   }
 }
 
-function logout() {
+async function logout() {
+  try {
+    const result = await pedir('/auth/logout', {method:'POST',credentials:'same-origin'});
+    if (!result.ok) throw new Error('No se pudo cerrar la sesión en el servidor');
+  } catch (error) {
+    showAuthError('No se pudo cerrar la sesión en el servidor. Revisá la conexión y volvé a intentar.');
+    return;
+  }
+  limpiarSesionLocal();
+}
+
+function limpiarSesionLocal() {
   authToken = null;
   currentUser = null;
   // No solo el token: también el grafo y las coincidencias guardadas para mostrar
@@ -291,7 +303,7 @@ async function bootApp() {
     showTab(tab, document.querySelector(`[data-nav="${tab === 'proyectoDetalle' ? 'proyectos' : tab}"]`), false);
     verificarAvisoPrivacidad();
   } catch {
-    logout();
+    limpiarSesionLocal();
   }
 }
 

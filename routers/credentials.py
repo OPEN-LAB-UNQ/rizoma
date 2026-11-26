@@ -29,7 +29,7 @@ def get_public_credential(credential_id: UUID, db: Session = Depends(get_db)):
     credential = (
         db.query(models.Credential)
         .options(joinedload(models.Credential.project))
-        .filter(models.Credential.id == credential_id, models.Credential.verified == True)
+        .filter(models.Credential.id == credential_id, models.Credential.verified == True, models.Credential.verified_by.is_not(None))
         .first()
     )
     if not credential:

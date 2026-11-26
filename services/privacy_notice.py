@@ -18,7 +18,7 @@ import models
 from auth import get_current_user
 from database import get_db
 
-NOTICE_VERSION = "2026-10-25.2"
+NOTICE_VERSION = "2026-11-26.1"
 NOTICE_PATH = Path(__file__).resolve().parent.parent / "static" / "privacidad.html"
 CODIGO_PENDIENTE = "aviso_privacidad_pendiente"
 

@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 import models
 import schemas
-from auth import get_current_user
+from auth import get_current_user, institutional_user
 from database import get_db
 
 router = APIRouter(prefix="/api/projects", tags=["projects"])
@@ -149,12 +149,12 @@ def create_project(
     user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if user.role not in ("teacher", "org", "admin"):
+    if not institutional_user(user):
         raise HTTPException(403, "Solo docentes y organizaciones pueden crear proyectos")
     project = models.Project(
         title=body.title,
         description=body.description,
-        institution=body.institution or user.institution,
+        institution=(body.institution or user.institution) if user.role == "admin" else user.institution,
         created_by=user.id,
         roles_available=body.roles_available,
         credential_title=body.credential_title,
@@ -181,8 +181,8 @@ def create_project(
 def _can_review_project(project: models.Project, user: models.User) -> bool:
     if user.role == "admin":
         return True
-    if project.created_by and project.created_by == user.id:
-        return True
+    if not institutional_user(user):
+        return False
     same_institution = (project.institution or "").strip().lower() == (user.institution or "").strip().lower()
     return user.role in ("teacher", "org") and bool(project.institution) and same_institution
 
@@ -243,7 +243,8 @@ def accept_application(
         models.Credential.id == application.credential_id
     ).first()
     if credential is None:
-        credential = models.Credential(user_id=application.user_id, project_id=project.id)
+        credential = models.Credential(user_id=application.user_id, project_id=project.id,
+                                       title=project.credential_title or f"Participación verificada: {project.title}")
         db.add(credential)
         db.flush()
         application.credential_id = credential.id
@@ -255,6 +256,11 @@ def accept_application(
     credential.description = body.evidence_note or (
         f"Participación validada institucionalmente en el proyecto {project.title}."
     )
+    db.add(models.SecurityAudit(actor_id=user.id,subject_id=application.user_id,
+        action='credential_verified',details={'credential_id':str(credential.id),
+        'project_id':str(project.id),'institution':project.institution,'evidence':body.evidence_note or ''}))
+    credential.verified_by = user.id
+    credential.verification_note = body.evidence_note or "Participación validada por responsable institucional habilitado"
     credential.verified = True
     credential.verified_at = datetime.utcnow()
     credential.project_id = project.id

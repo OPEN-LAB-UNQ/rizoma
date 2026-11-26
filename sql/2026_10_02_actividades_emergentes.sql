@@ -29,4 +29,8 @@ CREATE INDEX IF NOT EXISTS ix_emerging_activities_corrida ON emerging_activities
 ALTER TABLE emerging_activities ADD COLUMN IF NOT EXISTS estabilidad DOUBLE PRECISION DEFAULT 1;
 
 -- Permite valorar una actividad emergente como resultado (util / no util).
+-- En una instalación nueva la columna es texto y el tipo no existe.
+SELECT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'match_target_type') AS hay_tipo \gset
+\if :hay_tipo
 ALTER TYPE match_target_type ADD VALUE IF NOT EXISTS 'activity';
+\endif

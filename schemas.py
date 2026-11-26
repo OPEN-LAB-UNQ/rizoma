@@ -35,6 +35,13 @@ class RegisterRequest(BaseModel):
     # Versión del aviso de privacidad que la persona confirmó haber leído al registrarse.
     aviso_version: str = Field(default="", max_length=40)
 
+    @field_validator("password")
+    @classmethod
+    def password_bytes(cls, value):
+        if len(value.encode('utf-8')) > 72:
+            raise ValueError('La contraseña debe ocupar como máximo 72 bytes UTF-8')
+        return value
+
     @field_validator("name", "institution")
     @classmethod
     def trim_profile_fields(cls, value: str) -> str:
